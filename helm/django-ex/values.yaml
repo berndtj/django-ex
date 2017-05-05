@@ -1,0 +1,21 @@
+# Default values for django-ex.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: 367199020685.dkr.ecr.us-west-2.amazonaws.com/photon/django-ex
+  tag: latest
+  pullPolicy: Always
+service:
+  name: django-ex
+  type: LoadBalancer
+  externalPort: 9090
+  internalPort: 9090
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
