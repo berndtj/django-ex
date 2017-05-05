@@ -8,8 +8,8 @@ pipeline {
             steps {
                 kubectl get pods
                 echo 'Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
-                docker build -t ${repo}:${env.BUILD_ID} .
-                docker push ${repo}:${env.BUILD_ID}
+                docker build -t '${repo}:${env.BUILD_ID}' .
+                docker push '${repo}:${env.BUILD_ID}'
             }
         }
         stage('Test') {
