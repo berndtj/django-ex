@@ -6,6 +6,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh 'sleep 120'
                 sh 'kubectl get pods'
                 echo 'Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 sh 'docker build -t ${env.REPO}:${env.BUILD_ID} .'
