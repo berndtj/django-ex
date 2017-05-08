@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         REPO = '367199020685.dkr.ecr.us-west-2.amazonaws.com/photon/django-ex'
+        DOCKER_API_VERSION = '1.23'
     }
     stages {
         stage('Build') {
