@@ -6,23 +6,23 @@ pipeline {
         DOCKER_API_VERSION = '1.23'
     }
     stages {
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                sh """
+                    ./manage.py jenkins --enable-coverage
+                """
+                junit 'reports/*.xml'
+            }
+        }
         stage('Build') {
             steps {
                 echo "Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
                 sh """
                     docker build -t ${env.REPO}:${env.BUILD_ID} .
+                    sleep 5
+                    push_ecs.sh ${env.REPO}:${env.BUILD_ID}
                 """
-                retry(3) {
-                    sh """
-                        sleep 5
-                        push_ecs.sh ${env.REPO}:${env.BUILD_ID}
-                    """
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
             }
         }
         stage('Deploy') {
