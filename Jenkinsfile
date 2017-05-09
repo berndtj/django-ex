@@ -23,8 +23,8 @@ pipeline {
                     ls /report
                     cat /report/*
                 """
-                archive '/report/*'
-                junit '/report/*'
+                archive 'report/*'
+                junit 'report/*'
             }
         }
         stage('Publish') {
