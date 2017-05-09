@@ -14,7 +14,7 @@ pipeline {
                 """
                 retry(3) {
                     sh """
-                        sleep 10
+                        sleep 5
                         push_ecs.sh ${env.REPO}:${env.BUILD_ID}
                     """
                 }
@@ -31,7 +31,7 @@ pipeline {
                     ls /usr/local/bin
                     helm init
                     helm package --version 0.1.0-build.${env.BUILD_ID} helm/django-ex
-                    helm upgrade django-ex-0.1.0-build.${env.BUILD_ID}.tgz --install --name ${env.JOB_NAME} --set image.repository=${env.REPO} --set image.tag=${env.BUILD_ID}
+                    helm upgrade ${env.JOB_NAME} django-ex-0.1.0-build.${env.BUILD_ID}.tgz --set image.repository=${env.REPO} --set image.tag=${env.BUILD_ID}
                 """
                 echo 'Deploying....'
             }
