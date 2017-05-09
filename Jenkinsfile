@@ -20,10 +20,11 @@ pipeline {
                 sh """
                     mkdir ${env.WORKSPACE}/report
                     docker run -v ${env.WORKSPACE}/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    sleep 300
                     ls ${env.WORKSPACE}/report
                 """
                 archive "${env.WORKSPACE}/report/*.xml"
-                junit "${env.WORKSPACE}/report/*.xml"
+                // junit "${env.WORKSPACE}/report/*.xml"
             }
         }
         stage('Publish') {
