@@ -18,11 +18,12 @@ pipeline {
             steps {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 sh """
-                    mkdir report
-                    docker run -v `pwd`/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    mkdir ${env.WORKSPACE}/report
+                    docker run -v ${env.WORKSPACE}/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    ls ${env.WORKSPACE}/report
                 """
-                archive 'report/*'
-                junit 'report/*'
+                archive "${env.WORKSPACE}/report/*.xml"
+                junit "${env.WORKSPACE}/report/*.xml"
             }
         }
         stage('Publish') {
