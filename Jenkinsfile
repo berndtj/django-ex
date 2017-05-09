@@ -18,6 +18,7 @@ pipeline {
             steps {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 sh """
+<<<<<<< HEAD
                     mkdir ${env.WORKSPACE}/report
                     docker run -v ${env.WORKSPACE}/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     sleep 300
@@ -25,14 +26,24 @@ pipeline {
                 """
                 archive "${env.WORKSPACE}/report/*.xml"
                 // junit "${env.WORKSPACE}/report/*.xml"
+=======
+                    docker run -v /tmp/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    ls /work/report
+                """
+                archive "/work/report/*.xml"
+                junit "/work/report/*.xml"
+>>>>>>> still can't figure out paths for reports
             }
         }
         stage('Publish') {
             steps {
                 echo "Publishing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
-                sh """
-                    push_ecs.sh ${env.REPO}:${env.BUILD_ID}
-                """
+                retry(3) {
+                    sh """
+                        sleep 5
+                        push_ecs.sh ${env.REPO}:${env.BUILD_ID}
+                    """
+                }
             }
         }
         stage('Deploy') {
