@@ -21,7 +21,7 @@ pipeline {
                     mkdir report
                     docker run -v report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                 """
-                junit 'report/*.xml'
+                junit '/report/*.xml'
             }
         }
         stage('Publish') {
