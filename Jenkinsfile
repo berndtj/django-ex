@@ -10,7 +10,6 @@ pipeline {
             steps {
                 echo "Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
                 sh """
-                    sleep 300
                     docker build -t ${env.REPO}:${env.BUILD_ID} .
                     push_ecs.sh ${env.REPO}:${env.BUILD_ID}
                 """
@@ -23,8 +22,12 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh "helm init"
-                sh "helm package --version 0.1.0-build.${env.BUILD_ID} helm/django-ex"
+                sh """
+                    ls /usr/local/bin
+                    helm init
+                    helm package --version 0.1.0-build.${env.BUILD_ID} helm/django-ex
+                    helm install django-ex-0.1.0-build.${env.BUILD_ID}.tgz --name ${env.JOB_NAME} --set image.repository=${env.REPO} --set image.tag=${env.BUILD_ID}
+                """
                 echo 'Deploying....'
             }
         }
