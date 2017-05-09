@@ -10,6 +10,7 @@ pipeline {
             steps {
                 echo "Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
                 sh "docker build -t ${env.REPO}:${env.BUILD_ID} ."
+                sh "sleep 300"
                 sh "push_ecs.sh ${env.REPO}:${env.BUILD_ID}"
             }
         }
@@ -20,6 +21,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                sh "helm init"
+                sh "helm package --version 0.1.0-build.${env.BUILD_ID} helm/django-ex"
                 echo 'Deploying....'
             }
         }
