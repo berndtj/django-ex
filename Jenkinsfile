@@ -27,13 +27,17 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                echo 'Deploying....'
                 sh """
-                    ls /usr/local/bin
                     helm init
                     helm package --version 0.1.0-build.${env.BUILD_ID} helm/django-ex
-                    helm upgrade ${env.JOB_NAME} django-ex-0.1.0-build.${env.BUILD_ID}.tgz --set image.repository=${env.REPO} --set image.tag=${env.BUILD_ID}
+                    RELEASE=$(helm list -q | grep ${env.JOB_NAME} | sort | head -n1)
+                    if [[ $RELEASE == ${env.JOB_NAME} ]]; then
+                        helm upgrade ${env.JOB_NAME} django-ex-0.1.0-build.${env.BUILD_ID}.tgz --install --reset-values --set image.repository=${env.REPO} --set image.tag=${env.BUILD_ID}
+                    else
+                        helm install django-ex-0.1.0-build.${env.BUILD_ID}.tgz --name ${env.JOB_NAME} --set image.repository=${env.REPO} --set image.tag=${env.BUILD_ID}
+                    fi
                 """
-                echo 'Deploying....'
             }
         }
     }
