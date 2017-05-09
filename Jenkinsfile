@@ -19,7 +19,7 @@ pipeline {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 sh """
                     mkdir report
-                    docker run -v report:/report 8a71354cbe30 ./manage.py jenkins --enable-coverage --output-dir=/report
+                    docker run -v report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                 """
                 junit 'report/*.xml'
             }
