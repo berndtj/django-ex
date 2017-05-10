@@ -21,8 +21,8 @@ pipeline {
                     docker run -v /mnt/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     cp -r /work/report report
                 """
-                archiveArtifacts artifacts: 'report/*.xml'
-                junit 'report/*.xml'
+                archiveArtifacts artifacts: '/work/report/*.xml'
+                junit '/work/report/*.xml'
             }
         }
         stage('Publish') {
