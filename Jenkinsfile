@@ -20,9 +20,10 @@ pipeline {
                 sh """
                     docker run -v /tmp/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     ls /work/report
+                    cat /work/report/*.xml
                 """
-                archive "/work/report/*.xml"
-                junit "/work/report/*.xml"
+                archiveArtifacts artifacts: '/work/report/*.xml'
+                // junit '/work/report/*.xml'
             }
         }
         stage('Publish') {
