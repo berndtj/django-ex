@@ -17,12 +17,13 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
+                // Run tests in built container, copy out artifacts (required)
                 sh """
                     docker run -v /mnt/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     cp -r /work/report report
                 """
-                archiveArtifacts artifacts: '/work/report/*.xml'
-                junit '/work/report/*.xml'
+                archiveArtifacts artifacts: 'report/*.xml'
+                junit 'report/*.xml'
             }
         }
         stage('Publish') {
