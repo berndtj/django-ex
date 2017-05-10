@@ -18,10 +18,13 @@ pipeline {
             steps {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 sh """
-                    docker run -v /tmp/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    docker run -v /mnt/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     ls /work/report
                     cat /work/report/*.xml
+                    cp -r /work/report report
                 """
+                sh "ls /work"
+                sh "ls report"
                 archiveArtifacts artifacts: '/work/report/*.xml'
                 // junit '/work/report/*.xml'
             }
