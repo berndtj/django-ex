@@ -139,7 +139,10 @@ This is all orchestrated via the Helm Chart.
     Image: 367199020685.dkr.ecr.us-west-2.amazonaws.com/jenkins-agent
     ImageTag: latest
     Privileged: true
-    MountDocker: true```
+    PullImage: true
+    Volumes:
+        /var/run/docker.sock: /var/run/docker.sock
+        /mnt/work: /work```
 1. `JENKINS_NAME=demo`
 1. `helm install jenkins-0.6.2.tgz --name $JENKINS_NAME -f jenkins.values.yaml`
 1. `JENKINS_PASSWORD=$(kubectl get secret --namespace default $JENKINS_NAME-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)`
