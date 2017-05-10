@@ -137,12 +137,16 @@ This is all orchestrated via the Helm Chart.
 1. ```cat << EOF > jenkins.values.yaml
     Agent:
     Image: 367199020685.dkr.ecr.us-west-2.amazonaws.com/jenkins-agent
-    ImageTag: latest
+    ImageTag: 0.0.1
     Privileged: true
     PullImage: true
     Volumes:
-        /var/run/docker.sock: /var/run/docker.sock
-        /mnt/work: /work```
+    - type: HostPath 
+      hostPath: /var/run/docker.sock
+      mountPath: /var/run/docker.sock
+    - type: HostPath
+      hostPath: /mnt/work
+      mountPath: /work```
 1. `JENKINS_NAME=demo`
 1. `helm install jenkins-0.6.2.tgz --name $JENKINS_NAME -f jenkins.values.yaml`
 1. `JENKINS_PASSWORD=$(kubectl get secret --namespace default $JENKINS_NAME-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)`
