@@ -23,9 +23,9 @@ pipeline {
                     cat /work/report/*.xml
                     cp -r /work/report report
                 """
-                sh "ls /work"
+                sh "ls /work/report"
                 sh "ls report"
-                archiveArtifacts artifacts: '/work/report/*.xml'
+                archiveArtifacts artifacts: 'report/*.xml'
                 // junit '/work/report/*.xml'
             }
         }
