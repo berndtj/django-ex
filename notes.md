@@ -13,7 +13,7 @@ technologies:
 
 ### Kubernetes
 
-This is a given.  We are using a standard kubernetes, installed via Kops.
+This is a given.  We are using a standard kubernetes, installed via <a href="https://kubernetes.io/docs/getting-started-guides/kops/">Kops</a>.
 
 ### Jenkins
 
@@ -43,9 +43,9 @@ to create the deployable application images.
 
 Our solution is different.  We use standard, well understood formats:
 
-- Jenkinsfile to define the CI/CD pipeline
-- Helm Charts to define the kubernetes deployment
-- Dockerfile to define the application image
+- <a href="https://jenkins.io/doc/book/pipeline/jenkinsfile/">Jenkinsfile</a> to define the CI/CD pipeline
+- <a href="https://github.com/kubernetes/helm/blob/master/docs/charts.md">Helm Charts</a> to define the kubernetes deployment
+- <a href="https://docs.docker.com/engine/reference/builder/#environment-replacement">Dockerfile</a> to define the application image
 
 At a minimum, the application directory structure should include the following:
 
@@ -117,7 +117,7 @@ pipeline {
 }
 ```
 
-The pipeline has 4 stages, build, test, publish and deploy.  The build stage
+The pipeline has 4 stages: build, test, publish and deploy.  The build stage
 simply uses the included Dockerfile to build the application image.
 
 The test stage runs unit-tests via the built image.  Because there are no
