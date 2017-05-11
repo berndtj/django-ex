@@ -148,18 +148,19 @@ This is all orchestrated via the Helm Chart.
       hostPath: /mnt/work
       mountPath: /work```
 1. `JENKINS_NAME=demo`
-1. `helm install jenkins-0.6.2.tgz --name $JENKINS_NAME -f jenkins.values.yaml`
+1. `helm install jenkins-0.6.3.tgz --name $JENKINS_NAME -f jenkins.values.yaml`
 1. `JENKINS_PASSWORD=$(kubectl get secret --namespace default $JENKINS_NAME-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)`
 1. Wait for a few minutes for the cluster to deploy...
 1. `SERVICE_ENDPOINT=$(kubectl get svc $JENKINS_NAME-jenkins --namespace default --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")`
 1. `printf "user: admin\npassword: $JENKINS_PASSWORD\nurl: http://$SERVICE_ENDPOINT:8080/blue\n"`
-1. fork `https://github.com/berndtj/django-ex` into your own organization
-1. create new pipeline and point to the new repo
+1. Use the above credentials and url to login to Jenkins
+1. Fork `https://github.com/berndtj/django-ex` into your own organization
+1. Create new pipeline and point to the new repo
     - `GITHUB_ORG=<your org>` (e.g. berndtj or your github username)
-1. add a webhook to the repository
-    - open `echo "http://$SERVICE_ENDPOINT:8080/user/admin/configure"`
-        - get the API token (`Show API Token...`)
+1. Add a webhook to the repository
+    - Open `echo "http://$SERVICE_ENDPOINT:8080/user/admin/configure"`
+        - Get the API token (`Show API Token...`)
         - `API_TOKEN=<admin API token>`
-    - from the github repository -> setting -> webhooks -> add webhook
+    - From the github repository -> setting -> webhooks -> add webhook
     - `echo "http://admin:$API_TOKEN@$SERVICE_ENDPOINT:8080/job/$GITHUB_ORG/job/django-ex/job/master/build"`
-1. kick back and relax!
+1. Kick back and relax!
