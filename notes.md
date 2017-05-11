@@ -131,23 +131,30 @@ the application is already deployed, a rolling upgrade will be performed.
 This is all orchestrated via the Helm Chart.
 
 ## Demo steps:
-1. `git clone https://github.com/berndtj/charts.git`
-1. `cd charts`
-1. `helm package stable/jenkins`
-1. ```cat << EOF > jenkins.values.yaml
+1. Create the jenkins chart:
+    1. Once upstream changes are accepted, these steps won't be necessary
+    1. `git clone https://github.com/berndtj/charts.git`
+    1. `cd charts`
+    1. `helm package stable/jenkins`
+    1. This should create a tar.gz file (e.g. jenkins-0.6.3.tgz)
+1. Create values file: 
+    ```
+    cat << EOF > jenkins.values.yaml
     Agent:
-    Image: 367199020685.dkr.ecr.us-west-2.amazonaws.com/jenkins-agent
-    ImageTag: 0.0.1
-    Privileged: true
-    PullImage: true
-    Volumes:
-    - type: HostPath 
-      hostPath: /var/run/docker.sock
-      mountPath: /var/run/docker.sock
-    - type: HostPath
-      hostPath: /mnt/work
-      mountPath: /work```
-1. `JENKINS_NAME=demo`
+      Image: 367199020685.dkr.ecr.us-west-2.amazonaws.com/jenkins-agent
+      ImageTag: 0.0.3
+      Privileged: true
+      PullImage: true
+      Cpu: "400m"
+      Memory: "512Mi"
+      Volumes:
+      - type: HostPath 
+        hostPath: /var/run/docker.sock
+        mountPath: /var/run/docker.sock
+      - type: HostPath
+        hostPath: /mnt/work
+        mountPath: /work```
+1. Set the name for your jenkins cluster: `JENKINS_NAME=demo`
 1. `helm install jenkins-0.6.3.tgz --name $JENKINS_NAME -f jenkins.values.yaml`
 1. `JENKINS_PASSWORD=$(kubectl get secret --namespace default $JENKINS_NAME-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)`
 1. Wait for a few minutes for the cluster to deploy...
@@ -156,11 +163,11 @@ This is all orchestrated via the Helm Chart.
 1. Use the above credentials and url to login to Jenkins
 1. Fork `https://github.com/berndtj/django-ex` into your own organization
 1. Create new pipeline and point to the new repo
-    - `GITHUB_ORG=<your org>` (e.g. berndtj or your github username)
 1. Add a webhook to the repository
     - Open `echo "http://$SERVICE_ENDPOINT:8080/user/admin/configure"`
         - Get the API token (`Show API Token...`)
         - `API_TOKEN=<admin API token>`
     - From the github repository -> setting -> webhooks -> add webhook
+    - `GITHUB_ORG=<your org>` (e.g. berndtj or your github username)
     - `echo "http://admin:$API_TOKEN@$SERVICE_ENDPOINT:8080/job/$GITHUB_ORG/job/django-ex/job/master/build"`
 1. Kick back and relax!
