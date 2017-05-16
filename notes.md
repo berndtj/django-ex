@@ -139,7 +139,24 @@ This is all orchestrated via the Helm Chart.
     1. This should create a tar.gz file (e.g. jenkins-0.6.3.tgz)
 1. Create values file: 
     ```
+    export LIGHTWAVE_HOST=<lightwave host> # e.g. lightwave01.kops.bjung.net
+    export LIGHTWAVE_ROOT_DN=<lightwave root DN> # e.g. dc=kops,dc=bjung,dc=net
+    export LIGHTWAVE_PASSWORD=<lightwave manager password>
     cat << EOF > jenkins.values.yaml
+    Security:
+      Lightwave:
+        Server: $LIGHTWAVE_HOST
+        RootDN: $LIGHTWAVE_ROOT_DN
+        ManagerPassword: $LIGHTWAVE_PASSWORD
+    Master:
+      ServicePort: 80
+      InstallPlugins:
+      - kubernetes:0.11
+      - workflow-aggregator:2.5
+      - credentials-binding:1.11
+      - git:3.2.0
+      - blueocean:1.0.1
+      - ldap:1.15
     Agent:
       Image: 367199020685.dkr.ecr.us-west-2.amazonaws.com/jenkins-agent
       ImageTag: 0.0.3
