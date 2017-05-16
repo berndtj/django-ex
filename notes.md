@@ -131,53 +131,27 @@ the application is already deployed, a rolling upgrade will be performed.
 This is all orchestrated via the Helm Chart.
 
 ## Demo steps:
-1. Create the jenkins chart:
-    1. Once upstream changes are accepted, these steps won't be necessary
-    1. `git clone https://github.com/berndtj/charts.git`
-    1. `cd charts`
-    1. `helm package stable/jenkins`
-    1. This should create a tar.gz file (e.g. jenkins-0.6.3.tgz)
-1. Create values file: 
-    ```
-    export LIGHTWAVE_HOST=<lightwave host> # e.g. lightwave01.kops.bjung.net
-    export LIGHTWAVE_ROOT_DN=<lightwave root DN> # e.g. dc=kops,dc=bjung,dc=net
-    export LIGHTWAVE_PASSWORD=<lightwave manager password>
-    cat << EOF > jenkins.values.yaml
-    Security:
-      Lightwave:
-        Server: $LIGHTWAVE_HOST
-        RootDN: $LIGHTWAVE_ROOT_DN
-        ManagerPassword: $LIGHTWAVE_PASSWORD
-    Master:
-      ServicePort: 80
-      InstallPlugins:
-      - kubernetes:0.11
-      - workflow-aggregator:2.5
-      - credentials-binding:1.11
-      - git:3.2.0
-      - blueocean:1.0.1
-      - ldap:1.15
-    Agent:
-      Image: 367199020685.dkr.ecr.us-west-2.amazonaws.com/jenkins-agent
-      ImageTag: 0.0.3
-      Privileged: true
-      PullImage: true
-      Cpu: "400m"
-      Memory: "512Mi"
-      Volumes:
-      - type: HostPath 
-        hostPath: /var/run/docker.sock
-        mountPath: /var/run/docker.sock
-      - type: HostPath
-        hostPath: /mnt/work
-        mountPath: /work```
+1. Make sure you have a user on a lightwave installation (you will need this
+   to login to Jenkins)
+1. Add the photon charts repo:
+    1. helm repo add photon	https://berndtj.github.io/charts/photon
+    1. helm repo update
 1. Set the name for your jenkins cluster: `JENKINS_NAME=demo`
-1. `helm install jenkins-0.6.3.tgz --name $JENKINS_NAME -f jenkins.values.yaml`
-1. `JENKINS_PASSWORD=$(kubectl get secret --namespace default $JENKINS_NAME-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)`
+1. Deploy the chart: 
+    ```
+    export LIGHTWAVE_HOST='<lightwave host>' # e.g. lightwave01.kops.bjung.net
+    export LIGHTWAVE_ROOT_DN='<lightwave root DN>' # e.g. dc=kops\,dc=bjung\,dc=net
+    export LIGHTWAVE_PASSWORD='<lightwave manager password>'
+    helm install --debug --name $JENKINS_NAME \
+        --set Security.Lightwave.Server="$LIGHTWAVE_HOST" \
+        --set Security.Lightwave.RootDN="$LIGHTWAVE_ROOT_DN" \
+        --set Security.Lightwave.ManagerPassword="$LIGHTWAVE_PASSWORD" \
+        photon/jenkins
+    ```
 1. Wait for a few minutes for the cluster to deploy...
 1. `SERVICE_ENDPOINT=$(kubectl get svc $JENKINS_NAME-jenkins --namespace default --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")`
-1. `printf "user: admin\npassword: $JENKINS_PASSWORD\nurl: http://$SERVICE_ENDPOINT:8080/blue\n"`
-1. Use the above credentials and url to login to Jenkins
+1. `printf "url: http://$SERVICE_ENDPOINT:8080/blue\n"`
+1. Use the lightwave credentials and url to login to Jenkins
 1. Fork `https://github.com/berndtj/django-ex` into your own organization
 1. Create new pipeline and point to the new repo
 1. Add a webhook to the repository
