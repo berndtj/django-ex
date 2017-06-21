@@ -10,7 +10,6 @@ pipeline {
             steps {
                 echo "Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
                 sh """
-                    df -h
                     docker build -t ${env.REPO}/${env.IMAGE}:${env.BUILD_ID} .
                 """
             }
