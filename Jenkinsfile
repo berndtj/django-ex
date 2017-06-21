@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        REPO = ''
+        // REPO is set as an agent env variable
         IMAGE = 'library/django-ex'
         DOCKER_API_VERSION = '1.23'
     }
