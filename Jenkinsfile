@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        DEFAULT_AWS_REGION = 'us-west-2'
-        REPO = '367199020685.dkr.ecr.us-west-2.amazonaws.com/photon/django-ex'
+        REPO = ''
+        IMAGE = 'library/django-ex'
         DOCKER_API_VERSION = '1.23'
     }
     stages {
@@ -10,7 +10,7 @@ pipeline {
             steps {
                 echo "Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
                 sh """
-                    docker build -t ${env.REPO}:${env.BUILD_ID} .
+                    docker build -t ${env.REPO}/${env.IMAGE}:${env.BUILD_ID} .
                 """
             }
         }
@@ -19,7 +19,7 @@ pipeline {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 // Run tests in built container, copy out artifacts (required)
                 sh """
-                    docker run -v /mnt/work/report:/report ${env.REPO}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    docker run -v /mnt/work/report:/report ${env.REPO}/${env.IMAGE}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     cp -r /work/report report
                 """
                 archiveArtifacts artifacts: 'report/*.xml'
@@ -33,9 +33,13 @@ pipeline {
             }
             steps {
                 echo "Publishing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
-                sh """
-                    push_ecs.sh ${env.REPO}:${env.BUILD_ID}
-                """
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborsecret',
+                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh """
+                        docker login -u $USERNAME -p $PASSWORD https://${env.REPO}
+                        docker push ${env.REPO}/${env.IMAGE}:${env.BUILD_ID}
+                    """
+                }
             }
         }
         stage('Deploy') {
