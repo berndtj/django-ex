@@ -32,3 +32,7 @@ spec:
           periodSeconds: 30
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+{{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.image.pullSecret }}
+{{- end -}}

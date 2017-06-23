@@ -50,7 +50,16 @@ pipeline {
             steps {
                 echo 'Deploying ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 sh """
-                    helm_install.sh django-ex
+                    DOMAIN_NAME=${DOMAIN_NAME:-photon}
+                    NAME=django-ex-$JOB_BASE_NAME
+                    helm upgrade --install $NAME \
+                        --set=image.repoitory=$REPO \
+                        --set=image.tag=$BUILD_ID \
+                        --set=image.pullSecret=harborsecret \
+                        --set=service.type=ClusterIP \
+                        --set=ingress.enabled=true \
+                        --set=ingress.hosts.0=django-ex.$DOMAIN_NAME \
+                        helm/django-ex
                 """
             }
         }
