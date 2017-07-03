@@ -2,7 +2,7 @@ Package: django-ex
 Version: 0.1.0
 Architecture: all
 Maintainer: Berndt Jung <bjung@vmware.com>
-Installed-Size: 44836
+Installed-Size: 30860
 Depends: dpkg (>= 1.16.1), python2.7 | python2.6
 Section: python
 Priority: extra

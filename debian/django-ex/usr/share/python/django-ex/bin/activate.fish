@@ -32,7 +32,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/ubuntu/django-ex/debian/django-ex/usr/share/python/django-ex"
+set -gx VIRTUAL_ENV "/work/django-ex/debian/django-ex/usr/share/python/django-ex"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

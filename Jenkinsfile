@@ -26,6 +26,16 @@ pipeline {
                 junit 'report/*.xml'
             }
         }
+     	stage('Package') {
+            steps {
+                echo 'Building deb'
+                sh """
+                    dpkg-buildpackage -us -uc
+                    cp ../*.deb .
+                """
+                archiveArtifacts artifacts: '*.deb'
+            }
+        }
         stage('Publish') {
             when {
                 // Only publish master branch
