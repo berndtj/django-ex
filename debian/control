@@ -1,0 +1,12 @@
+Source: django-ex
+Section: python
+Priority: extra
+Maintainer: Berndt Jung <bjung@vmware.com>
+Build-Depends: debhelper (>= 7), python, dh-virtualenv (>= 0.6)
+Standards-Version: 3.9.4
+
+Package: django-ex
+Architecture: all
+Depends: dpkg (>= 1.16.1), python2.7 | python2.6, ${misc:Pre-Depends}
+Description: short description
+ longer package description...

@@ -1,0 +1,5 @@
+django-ex (0.1.0) trusty; urgency=medium
+
+  * Initial release. (Closes: #XXXXXX)
+
+ -- Berndt Jung <bjung@vmware>  Thu, 29 Jun 2017 03:36:35 +0000
