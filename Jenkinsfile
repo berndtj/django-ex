@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         // REPO is set as an agent env variable
+        DEB_S3_BUCKET = 'kops-spinnaker-deb-repo'
         IMAGE = 'library/django-ex'
         DOCKER_API_VERSION = '1.23'
     }
@@ -34,6 +35,9 @@ pipeline {
                     cp ../*.deb .
                 """
                 archiveArtifacts artifacts: '*.deb'
+                sh """
+                    deb-s3 upload --endpoint s3-us-west-2.amazonaws.com --bucket ${env.DEB_S3_BUCKET} *.deb
+                """
             }
         }
         stage('Publish') {
