@@ -41,17 +41,13 @@ pipeline {
             }
         }
         stage('Publish') {
-            when {
-                // Only publish master branch
-                expression { env.JOB_BASE_NAME == 'master' }
-            }
             steps {
                 echo "Publishing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'harborsecret',
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockersecret',
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh """
                         docker login -u $USERNAME -p $PASSWORD https://${env.REPO}
-                        docker push ${env.REPO}/${env.IMAGE}:${env.BUILD_ID}
+                        docker push ${env.REPO}/${env.IMAGE}:${env.JOB_BASE_NAME}-${env.BUILD_ID}
                     """
                 }
             }
