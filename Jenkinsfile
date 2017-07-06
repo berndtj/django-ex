@@ -46,7 +46,7 @@ pipeline {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockersecret',
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh """
-                        docker login -u $USERNAME -p $PASSWORD
+                        docker login -u '$USERNAME' -p '$PASSWORD'
                         docker push ${env.IMAGE}:${env.JOB_BASE_NAME}-${env.BUILD_ID}
                     """
                 }
