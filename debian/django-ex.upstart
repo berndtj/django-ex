@@ -1,0 +1,12 @@
+description "djangoex daemon"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+respawn
+respawn limit 5 60
+
+script
+  export DJANGO_SETTINGS_MODULE=project.settings
+  /usr/share/python/django-ex/bin/django-admin migrate
+  exec /usr/share/python/django-ex/bin/django-admin runserver 0.0.0.0:8000
+end script
