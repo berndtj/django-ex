@@ -3,7 +3,7 @@ pipeline {
     environment {
         // REPO is set as an agent env variable
         DEB_S3_BUCKET = 'kops-spinnaker-deb-repo'
-        IMAGE = 'library/django-ex'
+        IMAGE = 'berndtj/example'
         DOCKER_API_VERSION = '1.23'
     }
     stages {
@@ -11,7 +11,7 @@ pipeline {
             steps {
                 echo "Building ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}.."
                 sh """
-                    docker build -t ${env.REPO}/${env.IMAGE}:${env.BUILD_ID} .
+                    docker build -t ${env.IMAGE}:${env.JOB_BASE_NAME}-${env.BUILD_ID} .
                 """
             }
         }
@@ -46,8 +46,8 @@ pipeline {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockersecret',
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh """
-                        docker login -u $USERNAME -p $PASSWORD https://${env.REPO}
-                        docker push ${env.REPO}/${env.IMAGE}:${env.JOB_BASE_NAME}-${env.BUILD_ID}
+                        docker login -u $USERNAME -p $PASSWORD
+                        docker push ${env.IMAGE}:${env.JOB_BASE_NAME}-${env.BUILD_ID}
                     """
                 }
             }
