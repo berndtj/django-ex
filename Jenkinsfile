@@ -20,7 +20,7 @@ pipeline {
                 echo 'Testing ${env.JOB_NAME}:${env.BUILD_ID} on ${env.JENKINS_URL}..'
                 // Run tests in built container, copy out artifacts (required)
                 sh """
-                    docker run -v /mnt/work/report:/report ${env.REPO}/${env.IMAGE}:${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
+                    docker run -v /mnt/work/report:/report ${env.IMAGE}:${env.JOB_BASE_NAME}-${env.BUILD_ID} ./manage.py jenkins --enable-coverage --output-dir=/report
                     cp -r /work/report report
                 """
                 archiveArtifacts artifacts: 'report/*.xml'
